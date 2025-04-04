@@ -1,7 +1,51 @@
-import React from 'react';
+'use client';
+
+import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 
 export default function LoginPage() {
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!phone || !password) {
+      toast.error('لطفا تمام فیلدها را پر کنید');
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: phone, // استفاده از شماره تلفن در فیلد email
+        password,
+      });
+      
+      if (result?.error) {
+        toast.error('شماره موبایل یا رمز عبور اشتباه است');
+        return;
+      }
+      
+      toast.success('با موفقیت وارد شدید');
+      router.push(callbackUrl);
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('خطا در ورود به سیستم');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-4xl mx-auto">
@@ -51,16 +95,19 @@ export default function LoginPage() {
                 <p className="text-gray-600">برای دسترسی به حساب خود وارد شوید</p>
               </div>
               
-              <div className="mb-8">
+              <form onSubmit={handleSubmit} className="mb-8">
                 <div className="mb-4">
                   <label htmlFor="phone" className="block text-gray-700 font-medium mb-2">شماره موبایل</label>
                   <input
                     type="tel"
                     id="phone"
                     name="phone"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                     placeholder="مثال: ۰۹۱۲۳۴۵۶۷۸۹"
                     className="w-full px-4 py-3 border border-gold-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-500"
                     dir="ltr"
+                    required
                   />
                 </div>
                 
@@ -70,9 +117,12 @@ export default function LoginPage() {
                     type="password"
                     id="password"
                     name="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="******"
                     className="w-full px-4 py-3 border border-gold-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-500"
                     dir="ltr"
+                    required
                   />
                 </div>
                 
@@ -93,11 +143,12 @@ export default function LoginPage() {
                 
                 <button
                   type="submit"
-                  className="w-full bg-gold-500 hover:bg-gold-600 text-white py-3 px-4 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2"
+                  disabled={loading}
+                  className="w-full bg-gold-500 hover:bg-gold-600 text-white py-3 px-4 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 disabled:opacity-70"
                 >
-                  ورود به حساب
+                  {loading ? 'در حال پردازش...' : 'ورود به حساب'}
                 </button>
-              </div>
+              </form>
               
               <div className="relative mb-6">
                 <div className="absolute inset-0 flex items-center">

@@ -4,9 +4,14 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 const GoldenClockAnimation = () => {
+  const [isClient, setIsClient] = useState(false);
   const [time, setTime] = useState(new Date());
   const [isGold, setIsGold] = useState(false);
-  
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // Update clock time every second
   useEffect(() => {
     const timer = setInterval(() => {
@@ -15,7 +20,7 @@ const GoldenClockAnimation = () => {
     
     return () => clearInterval(timer);
   }, []);
-  
+
   // Toggle between clock and gold every 10 seconds
   useEffect(() => {
     const transformTimer = setInterval(() => {
@@ -24,16 +29,20 @@ const GoldenClockAnimation = () => {
     
     return () => clearInterval(transformTimer);
   }, []);
-  
+
+  if (!isClient) {
+    return null;
+  }
+   
   // Calculate clock hand rotations
   const hours = time.getHours() % 12;
   const minutes = time.getMinutes();
   const seconds = time.getSeconds();
-  
+
   const hourRotation = 30 * hours + minutes / 2;
   const minuteRotation = 6 * minutes;
   const secondRotation = 6 * seconds;
-  
+
   return (
     <div className="relative flex items-center justify-center">
       <motion.div
@@ -101,36 +110,39 @@ const GoldenClockAnimation = () => {
               </div>
               
               {/* Hour hand */}
-              <div
+              <motion.div
                 className="absolute w-[6px] h-[70px] rounded bg-gradient-to-b from-gold-400 to-gold-300 shadow-md z-[1]"
                 style={{ 
-                  transform: `rotate(${hourRotation}deg)`,
                   transformOrigin: 'bottom center',
                   bottom: '50%',
                   left: 'calc(50% - 3px)'
                 }}
+                animate={{ rotate: hourRotation }}
+                transition={{ duration: 0.5 }}
               />
               
               {/* Minute hand */}
-              <div
-                className="absolute w-[4px] h-[90px] rounded bg-gradient-to-b from-gold-300 to-gold-200 shadow-md z-[2]" 
+              <motion.div
+                className="absolute w-[4px] h-[90px] rounded bg-gradient-to-b from-gold-300 to-gold-200 shadow-md z-[2]"
                 style={{ 
-                  transform: `rotate(${minuteRotation}deg)`,
                   transformOrigin: 'bottom center',
                   bottom: '50%',
                   left: 'calc(50% - 2px)'
                 }}
+                animate={{ rotate: minuteRotation }}
+                transition={{ duration: 0.5 }}
               />
               
               {/* Second hand */}
-              <div
+              <motion.div
                 className="absolute w-[2px] h-[100px] rounded bg-red-500 z-[3]"
                 style={{ 
-                  transform: `rotate(${secondRotation}deg)`,
                   transformOrigin: 'bottom center',
                   bottom: '50%',
                   left: 'calc(50% - 1px)'
                 }}
+                animate={{ rotate: secondRotation }}
+                transition={{ duration: 0.5 }}
               />
               
               {/* Center cap */}

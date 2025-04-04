@@ -2,7 +2,14 @@ const fs = require('fs');
 const path = require('path');
 
 // Create necessary directories
-const blogImagesDir = path.join(__dirname, 'tala-jewelry', 'public', 'images', 'blog');
+const publicDir = path.join(__dirname, 'public');
+const imagesDir = path.join(publicDir, 'images');
+
+// Ensure directories exist
+if (!fs.existsSync(imagesDir)) {
+  fs.mkdirSync(imagesDir, { recursive: true });
+  console.log(`Created directory: ${imagesDir}`);
+}
 
 // Create an empty SVG with a gold gradient background and pattern
 function createGoldSVG(width, height, filename, text, pattern) {
@@ -33,8 +40,10 @@ function createGoldSVG(width, height, filename, text, pattern) {
 </svg>
   `.trim();
 
-  fs.writeFileSync(path.join(blogImagesDir, filename), svg);
-  console.log(`Created ${filename}`);
+  // Save directly to public/images directory
+  const outputPath = path.join(imagesDir, filename);
+  fs.writeFileSync(outputPath, svg);
+  console.log(`Created ${outputPath}`);
 }
 
 // Get different pattern for each image
@@ -67,23 +76,21 @@ function getPattern(type) {
   }
 }
 
-// Create the blog images
+// Define image templates to be created
 const images = [
-  { width: 1200, height: 600, filename: 'gold-hero.jpg', text: 'طلا در بازار جهانی', pattern: 'bars' },
-  { width: 600, height: 400, filename: 'gold-news1.jpg', text: 'افزایش تقاضای طلا', pattern: 'dots' },
-  { width: 600, height: 400, filename: 'gold-news2.jpg', text: 'تحلیل بازار طلا', pattern: 'coins' },
-  { width: 600, height: 400, filename: 'gold-news3.jpg', text: 'سرمایه‌گذاری در طلا', pattern: 'waves' }
+  { width: 1200, height: 600, filename: 'gold-hero.svg', text: 'طلا در بازار جهانی', pattern: 'bars' },
+  { width: 600, height: 400, filename: 'gold-news1.svg', text: 'افزایش تقاضای طلا', pattern: 'dots' },
+  { width: 600, height: 400, filename: 'gold-news2.svg', text: 'تحلیل بازار طلا', pattern: 'coins' },
+  { width: 600, height: 400, filename: 'gold-news3.svg', text: 'سرمایه‌گذاری در طلا', pattern: 'waves' },
+  { width: 600, height: 400, filename: 'gold-news4.svg', text: 'آموزش طلا', pattern: 'bars' },
+  { width: 600, height: 400, filename: 'gold-news5.svg', text: 'قیمت جهانی طلا', pattern: 'dots' }
 ];
-
-// Ensure directory exists
-if (!fs.existsSync(blogImagesDir)) {
-  fs.mkdirSync(blogImagesDir, { recursive: true });
-  console.log(`Created directory: ${blogImagesDir}`);
-}
 
 // Create each image
 images.forEach(image => {
   createGoldSVG(image.width, image.height, image.filename, image.text, image.pattern);
 });
 
-console.log('Blog images setup complete!'); 
+console.log('Blog images setup complete!');
+console.log('Images are now available in the public/images directory');
+console.log('Use them via: /images/[filename]'); 

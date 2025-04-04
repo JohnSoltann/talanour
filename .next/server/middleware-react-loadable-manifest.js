@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{}"
+self.__REACT_LOADABLE_MANIFEST="{\"app\\\\providers.tsx -> @/components/DebugPanel\":{\"id\":\"app\\\\providers.tsx -> @/components/DebugPanel\",\"files\":[\"static/chunks/_app-pages-browser_src_components_DebugPanel_tsx.js\"]},\"contexts\\\\BlogDataContext.tsx -> @/lib/data/blogData\":{\"id\":\"contexts\\\\BlogDataContext.tsx -> @/lib/data/blogData\",\"files\":[]}}"

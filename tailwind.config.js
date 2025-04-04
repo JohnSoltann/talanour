@@ -23,6 +23,18 @@ module.exports = {
           '800': '#855314',
           '900': '#713f18',
         },
+        cream: {
+          '50': '#fffef9',
+          '100': '#fcf9e9',
+          '200': '#f9f0d3',
+          '300': '#f5e7b8',
+          '400': '#f0d892',
+          '500': '#e8c46d',
+          '600': '#d5a84d',
+          '700': '#b4863d',
+          '800': '#8e6b37',
+          '900': '#785a33',
+        },
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

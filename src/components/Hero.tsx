@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
 import DynamicLight from './DynamicLight';
 import { useEffect, useState } from "react";
@@ -9,6 +8,7 @@ import GoldenClockAnimation from './GoldenClockAnimation';
 
 const Hero = () => {
   const [scrollY, setScrollY] = useState(0);
+  const [animationStyle, setAnimationStyle] = useState<React.CSSProperties>({});
   
   useEffect(() => {
     const handleScroll = () => {
@@ -17,6 +17,17 @@ const Hero = () => {
     
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    // Generate random animation values only on client side
+    const style = {
+      top: `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`,
+      animationDelay: `${Math.random() * 3}s`,
+      animationDuration: `${3 + Math.random() * 3}s`
+    };
+    setAnimationStyle(style);
   }, []);
   
   return (
@@ -32,22 +43,10 @@ const Hero = () => {
       {/* Floating particles */}
       <div className="absolute inset-0 pointer-events-none">
         {Array.from({ length: 25 }).map((_, i) => (
-          <motion.div
+          <div
             key={i}
-            className="absolute h-1 w-1 rounded-full bg-gold-300"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -20, 0],
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 5,
-              repeat: Infinity,
-              delay: Math.random() * 5,
-            }}
+            className="absolute h-1 w-1 rounded-full bg-gold-300 animate-float"
+            style={animationStyle}
           />
         ))}
       </div>
@@ -57,12 +56,9 @@ const Hero = () => {
         <div className="relative z-10 grid grid-cols-1 gap-12 lg:grid-cols-10">
           
           {/* Text content */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            style={{ y: scrollY * -0.1 }}
-            className="flex flex-col justify-center space-y-6 text-right order-2 lg:order-1 lg:col-span-6"
+          <div 
+            style={{ transform: `translateY(${scrollY * -0.1}px)` }}
+            className="flex flex-col justify-center space-y-6 text-right order-2 lg:order-1 lg:col-span-6 transition-opacity duration-700 opacity-100"
           >
             <h1 className="text-4xl font-bold leading-tight text-gray-900 md:text-6xl">
               <span className="inline-block">کم کم</span>{" "}
@@ -88,10 +84,8 @@ const Hero = () => {
               >
                 <span className="relative z-10">شروع سرمایه‌گذاری</span>
                 <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-gold-400 to-gold-600 transition-transform group-hover:translate-x-0" />
-                <motion.span 
-                  className="absolute inset-0 opacity-0 bg-white/10"
-                  animate={{ opacity: [0, 0.5, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                <span 
+                  className="absolute inset-0 bg-white/10 animate-pulse"
                 />
               </Link>
               
@@ -108,11 +102,8 @@ const Hero = () => {
             </div>
             
             {/* Trust indicators */}
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1, duration: 1 }}
-              className="flex flex-wrap items-center justify-end mt-8 gap-6 text-sm text-gray-500"
+            <div 
+              className="flex flex-wrap items-center justify-end mt-8 gap-6 text-sm text-gray-500 transition-opacity duration-1000 opacity-100"
             >
               <div className="flex items-center gap-2">
                 <span>تضمین اصالت طلا</span>
@@ -132,62 +123,41 @@ const Hero = () => {
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                 </svg>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
           
           {/* Golden Clock Animation */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, delay: 0.4 }}
-            style={{ y: scrollY * 0.05 }}
-            className="relative flex items-center justify-center order-1 lg:order-2 lg:col-span-4"
+          <div
+            style={{ transform: `translateY(${scrollY * 0.05}px)` }}
+            className="relative flex items-center justify-center order-1 lg:order-2 lg:col-span-4 transition-opacity duration-1000 opacity-100"
           >
             <div className="relative">
               <GoldenClockAnimation />
             </div>
             
             {/* Gold coins elements */}
-            <motion.div
-              className="absolute top-1/4 right-0 h-10 w-10 rounded-full bg-gradient-to-br from-gold-300 to-gold-500 shadow-gold"
-              animate={{
-                y: [0, -12, 0],
-                rotate: [0, 10, 0],
-              }}
-              transition={{
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 1,
+            <div
+              className="absolute top-1/4 right-0 h-10 w-10 rounded-full bg-gradient-to-br from-gold-300 to-gold-500 shadow-gold animate-float"
+              style={{
+                animationDuration: '5s',
+                animationDelay: '1s',
               }}
             />
-            <motion.div
-              className="absolute bottom-[30%] left-[5%] h-8 w-8 rounded-full bg-gradient-to-br from-gold-300 to-gold-500 shadow-gold"
-              animate={{
-                y: [0, 15, 0],
-                rotate: [0, -10, 0],
-              }}
-              transition={{
-                duration: 4.5,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 0.5,
+            <div
+              className="absolute bottom-[30%] left-[5%] h-8 w-8 rounded-full bg-gradient-to-br from-gold-300 to-gold-500 shadow-gold animate-float"
+              style={{
+                animationDuration: '4.5s',
+                animationDelay: '0.5s',
               }}
             />
-            <motion.div
-              className="absolute top-[60%] right-[10%] h-6 w-6 rounded-full bg-gradient-to-br from-gold-300 to-gold-500 shadow-gold"
-              animate={{
-                y: [0, 10, 0],
-                rotate: [0, 15, 0],
-              }}
-              transition={{
-                duration: 6,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 1.5,
+            <div
+              className="absolute top-[60%] right-[10%] h-6 w-6 rounded-full bg-gradient-to-br from-gold-300 to-gold-500 shadow-gold animate-float"
+              style={{
+                animationDuration: '6s',
+                animationDelay: '1.5s',
               }}
             />
-          </motion.div>
+          </div>
         </div>
       </div>
       
@@ -205,29 +175,17 @@ const Hero = () => {
       ))}
       
       {/* Decorative elements */}
-      <motion.div
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.5, 0.3]
+      <div
+        className="absolute left-0 top-0 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-radial from-gold-200/20 to-transparent blur-3xl animate-pulse"
+        style={{
+          animationDuration: '4s',
         }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute left-0 top-0 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-radial from-gold-200/20 to-transparent blur-3xl"
       />
-      <motion.div
-        animate={{
-          scale: [1, 1.1, 1],
-          opacity: [0.2, 0.4, 0.2]
+      <div
+        className="absolute bottom-0 right-0 h-96 w-96 translate-x-1/3 translate-y-1/3 rounded-full bg-gradient-radial from-gold-200/20 to-transparent blur-3xl animate-pulse"
+        style={{
+          animationDuration: '5s',
         }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute bottom-0 right-0 h-96 w-96 translate-x-1/3 translate-y-1/3 rounded-full bg-gradient-radial from-gold-200/20 to-transparent blur-3xl"
       />
     </div>
   );
